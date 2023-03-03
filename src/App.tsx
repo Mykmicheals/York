@@ -1,10 +1,13 @@
 import React from 'react';
+import Header from './components/Header';
+import HomeScreen from './screens/HomeScreen';
 
 
 function App() {
   return (
     <div className="App">
-     <p className='text-red bg-red-200'>Hi</p>
+      <Header />
+     <HomeScreen />
     </div>
   );
 }
