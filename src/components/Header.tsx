@@ -37,8 +37,7 @@ const Header = () => {
         </span>        
         </div>
        
-    
-
+   
       </div>
           <header className=" w-full bg-white shadow-lg z-10">
       <div className="container mx-auto px-4">
