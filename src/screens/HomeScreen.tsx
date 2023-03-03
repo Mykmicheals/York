@@ -1,6 +1,15 @@
 import React from 'react'
 import { FaSearch } from 'react-icons/fa';
 
+
+const cities =[
+    'Lagos',
+    'Abijan',
+    'Luhansk',
+    'Mauriopol',
+    'Anthens'
+]
+
 function HomeScreen() {
   return (
      <div className='flex w-full gap-20'>
