@@ -44,6 +44,7 @@ function HomeScreen() {
     setFilter(event.target.value);
     setShowFilter(true);
   };
+
   const [lng, setLng] = useState(3.3792);
   const [lat, setLat] = useState(6.5244);
   const [zoom, setZoom] = useState(9);
@@ -65,15 +66,24 @@ function HomeScreen() {
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize
 
-    marker.current = new mapboxgl.Marker()
+    const marker = new mapboxgl.Marker()
       .setLngLat([lng, lat])
       .addTo(map.current);
+
+    marker.getElement().addEventListener("click", () => {
+      // Call your function here
+      console.log("good");
+    });
 
     map.current.on("move", () => {
       setLng(parseFloat(map.current!.getCenter().lng.toFixed(4)));
       setLat(parseFloat(map.current!.getCenter().lat.toFixed(4)));
       setZoom(parseFloat(map.current!.getZoom().toFixed(2)));
     });
+
+    return () => {
+      marker.remove(); // remove marker on unmount
+    };
   }, [lng, lat]);
 
   const handleSearch = () => {
