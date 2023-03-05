@@ -47,25 +47,7 @@ const Header = () => {
             <div className="items-center">
               <img className="w-32 h-12 mr-2" src={logos} alt="School logo" />
             </div>
-            {/* <div className="hidden md:block">
-              <nav className="flex space-x-16">
-                <a href="#" className="text-gray-600 hover:text-teal-500">
-                  Home
-                </a>
-                <a href="#" className="text-gray-600 hover:text-teal-500">
-                  About
-                </a>
-                <a href="#" className="text-gray-600 hover:text-teal-500">
-                  Services
-                </a>
-                <a
-                  href="#"
-                  className="text-white hover:text-gray-900 bg-teal-500 px-4 py-1 rounded-20"
-                >
-                  Contacts
-                </a>
-              </nav>
-            </div> */}
+    
             <div className="md:hidden">
               <button
                 type="button"

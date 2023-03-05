@@ -1,13 +1,12 @@
-import { useState, ChangeEvent, useEffect, useRef } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import "mapbox-gl/dist/mapbox-gl.css";
-
 import Map, { Popup, Marker } from "react-map-gl";
 import { MdCancel } from "react-icons/md";
 import { HiLocationMarker } from "react-icons/hi";
 import cities from "../components/cities.json";
 import SideBar from "../components/SideBar";
-import mapboxgl from "mapbox-gl";
+
 
 // @ts-ignore
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -48,12 +47,9 @@ function HomeScreen() {
     setForecast(data?.daily.slice(0, 2));
   };
 
-  const togglePopup = () => {
-    setShowPopup(true);
-  };
+
 
   useEffect(() => {
-    console.log(showPopup);
     handleSearch();
     fetchWeather();
   }, [showPopup, lat, lng, city]);
@@ -74,7 +70,7 @@ function HomeScreen() {
               <input
                 className="block w-full rounded-full bg-gray-100 border-transparent focus:border-gray-500  focus:ring-0 pl-10 pr-10 py-2 text-sm placeholder-gray-500 focus:outline-none"
                 type="text"
-                placeholder="Search for Student"
+                placeholder="Search for City"
                 value={filter}
                 onChange={handleFilterChange}
               />
@@ -111,7 +107,7 @@ function HomeScreen() {
               </div>
             )}
 
-            <div className=" md:mx-10 lg:mx-20 mt-10">
+            <div className="mx-20 lg:mx-20 mt-10">
               <Map
                 style={{ height: "54vh", width: "100%" }}
                 mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
@@ -128,48 +124,7 @@ function HomeScreen() {
                 >
                   <HiLocationMarker size={32} color="blue" />
                 </Marker>
-
-                {showPopup ? (
-                  <Popup
-                    className="z-1000 bg-red"
-                    longitude={lng}
-                    latitude={lat}
-                    anchor="bottom"
-                    // onOpen={() => setShowPopup(true)}
-                    //onClose={() => setShowPopup(false)}
-                  >
-                    <div className="p-6">
-                      <h2 className="text-xl font-bold mb-4">
-                        Weather Forecast
-                      </h2>
-                      {forecast?.map((day: any, index: number) => (
-                        <div key={index} className="mb-4">
-                          <h3 className="text-lg font-semibold">
-                            {index === 0 ? "Today" : "Tomorrow"}
-                          </h3>
-                          <div className="flex items-center">
-                            <img
-                              src={`http://openweathermap.org/img/w/${day.weather[0].icon}.png`}
-                              alt={day.weather[0].description}
-                              className="w-12 h-12 mr-4"
-                            />
-                            <div>
-                              <p className="text-gray-600">
-                                {day.weather[0].description}
-                              </p>
-                              <p className="text-gray-600">
-                                High: {day.temp.max}°C
-                              </p>
-                              <p className="text-gray-600">
-                                Low: {day.temp.min}°C
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </Popup>
-                ) : null}
+         
               </Map>
             </div>
           </div>
