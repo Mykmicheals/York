@@ -1,8 +1,16 @@
 import { useState, ChangeEvent, useEffect, useRef } from "react";
 import { FaSearch } from "react-icons/fa";
-import Map, { GeolocateControl, Marker } from "react-map-gl";
+// import Map, { GeolocateControl, Marker } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import Map, { Popup, Marker } from "react-map-gl";
+import { HiLocationMarker } from "react-icons/hi";
+import WeatherModal from "../components/WeatherModal";
+
+import Rodal from "rodal";
+
+// include styles
+import "rodal/lib/rodal.css";
 //import Geocode from "react-geocode";
 
 function HomeScreen() {
@@ -21,10 +29,9 @@ function HomeScreen() {
     lat: number;
     lng: number;
   }
+  const [showPopup, setShowPopup] = useState(false);
   const [filter, setFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
-
-  const [regions, setRegions] = useState<City[]>([]);
   const marker = useRef<mapboxgl.Marker | null>(null);
 
   const [cities, setCities] = useState<cities[]>([
@@ -49,42 +56,11 @@ function HomeScreen() {
   const [lat, setLat] = useState(6.5244);
   const [zoom, setZoom] = useState(9);
 
-  const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<mapboxgl.Map | null>(null);
 
   useEffect(() => {
-    mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN || "";
-    if (map.current) return; // initialize map only once
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current!,
-      style: "mapbox://styles/mapbox/streets-v12",
-      center: [lng, lat],
-      zoom: zoom,
-    });
-  }, [lng, lat, zoom]);
-
-  useEffect(() => {
-    if (!map.current) return; // wait for map to initialize
-
-    const marker = new mapboxgl.Marker()
-      .setLngLat([lng, lat])
-      .addTo(map.current);
-
-    marker.getElement().addEventListener("click", () => {
-      // Call your function here
-      console.log("good");
-    });
-
-    map.current.on("move", () => {
-      setLng(parseFloat(map.current!.getCenter().lng.toFixed(4)));
-      setLat(parseFloat(map.current!.getCenter().lat.toFixed(4)));
-      setZoom(parseFloat(map.current!.getZoom().toFixed(2)));
-    });
-
-    return () => {
-      marker.remove(); // remove marker on unmount
-    };
-  }, [lng, lat]);
+    console.log(showPopup);
+  }, [showPopup]);
 
   const handleSearch = () => {
     if (!map.current) return; // wait for map to initialize
@@ -122,72 +98,106 @@ function HomeScreen() {
   // }, []);
 
   return (
-    <div className="flex w-full gap-20">
-      <div className="w-1/4 h-screen bg-teal-700">
-        Cities
-        <h3 className="text-white text-center text-3xl font-mono mt-8"></h3>
-        <div className="mt-12 mx-10">
-          {cities.map((each: any) => {
-            return (
-              <p className="text-gray-300 text-xl pointer mb-8 hover:border hover:px-4 hover:py-1 hover:bg-teal-900">
-                {each.name}
-              </p>
-            );
-          })}
+    <div>
+      <div className="flex w-full gap-20">
+        <div className="w-1/4 h-screen bg-teal-700">
+          Cities
+          <h3 className="text-white text-center text-3xl font-mono mt-8"></h3>
+          <div className="mt-12 mx-10">
+            {cities.map((each: any) => {
+              return (
+                <p className="text-gray-300 text-xl pointer mb-8 hover:border hover:px-4 hover:py-1 hover:bg-teal-900">
+                  {each.name}
+                </p>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      <div>
         <div className="mt-10 flex-grow w-3/4  text-center">
-          <div className="relative w-full max-w-md mx-auto">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FaSearch className="text-gray-400" />
-            </div>
-            <input
-              className="block w-full rounded-full bg-gray-100 border-transparent focus:border-gray-500  focus:ring-0 pl-10 pr-10 py-2 text-sm placeholder-gray-500 focus:outline-none"
-              type="text"
-              placeholder="Search for Student"
-              value={filter}
-              onChange={handleFilterChange}
-            />
+          <div>
+            <div className="relative w-full max-w-md mx-auto">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaSearch className="text-gray-400" />
+              </div>
+              <input
+                className="block w-full rounded-full bg-gray-100 border-transparent focus:border-gray-500  focus:ring-0 pl-10 pr-10 py-2 text-sm placeholder-gray-500 focus:outline-none"
+                type="text"
+                placeholder="Search for Student"
+                value={filter}
+                onChange={handleFilterChange}
+              />
 
-            <div className="absolute top-0 right-0 h-full flex items-center pr-3">
-              <button
-                onClick={handleSearch}
-                className="px-4 bg-teal-500 text-white rounded-r-full focus:outline-none"
+              <div className="absolute top-0 right-0 h-full flex items-center pr-3">
+                <button
+                  onClick={handleSearch}
+                  className="px-4 bg-teal-500 text-white rounded-r-full focus:outline-none"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+
+            {showFilter && (
+              <div className="w-full flex justify-center">
+                <ul className="mt-2 w-1/2 rounded-md bg-white shadow-lg max-h-32 overflow-auto mx-auto">
+                  {filteredCities?.map((city) => (
+                    <li
+                      onClick={() => {
+                        setFilter(city.name);
+                        setShowFilter(false);
+                        setLat(city.lat);
+                        setLng(city.lng);
+                      }}
+                      key={city.lat}
+                      className="py-2 px-3 hover:bg-gray-100"
+                    >
+                      {city.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <Map
+              style={{ height: "500px", width: "90%" }}
+              mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+              initialViewState={{
+                longitude: lng,
+                latitude: lat,
+                zoom: zoom,
+              }}
+              mapStyle="mapbox://styles/mapbox/streets-v9"
+            >
+              <Marker
+                onClick={() => setShowPopup(true)}
+                longitude={lng}
+                latitude={lat}
+                anchor="bottom"
               >
-                Search
-              </button>
-            </div>
-          </div>
+                <HiLocationMarker
+                  onClick={() => setShowPopup(true)}
+                  size={32}
+                  color="blue"
+                />
+              </Marker>
 
-          {showFilter && (
-            <div className="w-full flex justify-center">
-              <ul className="mt-2 w-1/2 rounded-md bg-white shadow-lg max-h-32 overflow-auto mx-auto">
-                {filteredCities?.map((city) => (
-                  <li
-                    onClick={() => {
-                      setFilter(city.name);
-                      setShowFilter(false);
-                      setLat(city.lat);
-                      setLng(city.lng);
-                    }}
-                    key={city.lat}
-                    className="py-2 px-3 hover:bg-gray-100"
-                  >
-                    {city.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        <div className="mt-20">
-          <div className="sidebar">
-            Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+              {showPopup && (
+                <Popup
+                  className="z-1000 bg-red"
+                  longitude={lng}
+                  latitude={lat}
+                  anchor="bottom"
+                  // onClose={() => setShowPopup(false)}
+                >
+                  <p>this is a good popup</p>
+                </Popup>
+              )}
+            </Map>
           </div>
-          <div ref={mapContainer} className="map-container" />
         </div>
+
+        {/* <Rodal visible={showPopup} onClose={() => setShowPopup(false)}></Rodal> */}
       </div>
     </div>
   );
