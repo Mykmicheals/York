@@ -5,25 +5,11 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Map, { Popup, Marker } from "react-map-gl";
 import { HiLocationMarker } from "react-icons/hi";
-import WeatherModal from "../components/WeatherModal";
-
 import Rodal from "rodal";
-
 // include styles
 import "rodal/lib/rodal.css";
-//import Geocode from "react-geocode";
 
 function HomeScreen() {
-  interface City {
-    components: {
-      city: string;
-      country: string;
-    };
-    geometry: {
-      lat: number;
-      lng: number;
-    };
-  }
   interface cities {
     name: string;
     lat: number;
@@ -58,14 +44,17 @@ function HomeScreen() {
 
   const map = useRef<mapboxgl.Map | null>(null);
 
-  useEffect(() => {
-    console.log(showPopup);
-  }, [showPopup]);
-
   const handleSearch = () => {
     if (!map.current) return; // wait for map to initialize
     map.current.setCenter([lng, lat]);
+    setLat(lat);
+    setLng(lng);
   };
+
+  useEffect(() => {
+    console.log(lat);
+    handleSearch();
+  }, [showPopup, lat, lng]);
 
   // useEffect(() => {
   //   const fetchCities = async () => {
@@ -162,11 +151,9 @@ function HomeScreen() {
             <Map
               style={{ height: "500px", width: "90%" }}
               mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-              initialViewState={{
-                longitude: lng,
-                latitude: lat,
-                zoom: zoom,
-              }}
+              longitude={lng}
+              latitude={lat}
+              zoom={zoom}
               mapStyle="mapbox://styles/mapbox/streets-v9"
             >
               <Marker
@@ -182,17 +169,17 @@ function HomeScreen() {
                 />
               </Marker>
 
-              {showPopup && (
+              {showPopup ? (
                 <Popup
                   className="z-1000 bg-red"
                   longitude={lng}
                   latitude={lat}
                   anchor="bottom"
-                  // onClose={() => setShowPopup(false)}
+                  onClose={() => setShowPopup(false)}
                 >
                   <p>this is a good popup</p>
                 </Popup>
-              )}
+              ) : null}
             </Map>
           </div>
         </div>
