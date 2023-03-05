@@ -1,21 +1,13 @@
 import { FaPhoneAlt } from "react-icons/fa";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Transition } from "@headlessui/react";
 import logos from "../../src/assets/images/logo.png";
-import { AiOutlineMail, AiOutlineLogin } from "react-icons/ai";
-import { BiLogIn, BiMenuAltRight } from "react-icons/bi";
-import { Link } from "react-router-dom";
-
-//import { useDispatch, useSelector } from "react-redux";
-
-interface authState {
-  isLoggeedin: boolean;
-  token: string;
-}
+import { AiOutlineMail } from "react-icons/ai";
+import { BiMenuAltRight } from "react-icons/bi";
+import SideBar from "./SideBar";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  // const auth:any = useSelector((state:authState) => state);
 
   return (
     <div className="relative fixed">
@@ -34,7 +26,7 @@ const Header = () => {
           </span>
           <span className="flex gap-2 md:gap-4">
             <AiOutlineMail className="text-white mt-1" />
-            <p className="text-white">mykmicheals@gmail.com</p>
+            <p className="text-white">myk@gmail.com</p>
           </span>
         </div>
       </div>
@@ -84,40 +76,10 @@ const Header = () => {
                 leave="transition ease-in duration-200 transform"
                 leaveFrom="translate-x-0"
                 leaveTo="-translate-x-full"
-                className="fixed h-screen absolute top-0 w-1/2 left-0 z-50 md:hidden"
+                className="fixed h-screen overflow-scroll absolute top-0 w-2/3 left-0 z-50 md:hidden"
               >
-                <div>
-                  <nav className="bg-white px-2 py-3 h-screen shadow">
-                    <img
-                      className="h-8 mx-auto mb-12 mt-4"
-                      src={logos}
-                      alt="School logo"
-                    />
-                    <a
-                      href="#"
-                      className="block text-gray-600 hover:text-gray-900 py-2"
-                    >
-                      Home
-                    </a>
-                    <a
-                      href="#"
-                      className="block text-gray-600 hover:text-gray-900 py-2"
-                    >
-                      About
-                    </a>
-                    <a
-                      href="#"
-                      className="block text-gray-600 hover:text-gray-900 py-2"
-                    >
-                      Services
-                    </a>
-                    <a
-                      href="#"
-                      className="block text-gray-600 hover:text-gray-900 py-2"
-                    >
-                      Contacts
-                    </a>
-                  </nav>
+                <div className="w-full h-screen overflow-scroll bg-teal-700">
+                  <SideBar />
                 </div>
               </Transition>
             </div>
