@@ -43,7 +43,11 @@
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "not safari < 10",
+      "not chrome < 51",
+      "not android < 5",
+      "not ie < 12"
     ],
     "development": [
       "last 1 chrome version",
@@ -52,6 +56,9 @@
     ]
   },
   "devDependencies": {
-    "@types/react-modal": "^3.13.1"
+    "@babel/plugin-transform-runtime": "^7.21.0",
+    "@babel/preset-env": "^7.20.2",
+    "@types/react-modal": "^3.13.1",
+    "babel-loader": "^9.1.2"
   }
 }
