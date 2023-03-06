@@ -1,13 +1,13 @@
-import React from 'react';
-import Header from './components/Header';
-import HomeScreen from './screens/HomeScreen';
-
+import Header from "./components/Header";
+import MyMap from "./components/MyMap";
+import HomeScreen from "./screens/HomeScreen";
 
 function App() {
   return (
     <div className="App">
       <Header />
-     <HomeScreen />
+      <HomeScreen />
+      {/* <MyMap /> */}
     </div>
   );
 }
