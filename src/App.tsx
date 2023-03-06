@@ -1,14 +1,15 @@
+import { Provider } from "react-redux";
 import Header from "./components/Header";
 import MyMap from "./components/MyMap";
 import HomeScreen from "./screens/HomeScreen";
+import store from "./store/store";
 
 function App() {
   return (
-    <div className="App">
+    <Provider store={store}>
       <Header />
       <HomeScreen />
-      {/* <MyMap /> */}
-    </div>
+    </Provider>
   );
 }
 
