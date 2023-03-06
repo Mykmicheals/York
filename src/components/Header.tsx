@@ -5,9 +5,20 @@ import logos from "../../src/assets/images/logo.png";
 import { AiOutlineMail } from "react-icons/ai";
 import { BiMenuAltRight } from "react-icons/bi";
 import SideBar from "./SideBar";
+import { useDispatch } from "react-redux";
+import { setLat, setLng } from "../store/store";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const setLatitude = () => {
+    dispatch(setLat);
+  };
+
+  const setLongitude = () => {
+    dispatch(setLng);
+  };
 
   return (
     <div className="relative fixed">

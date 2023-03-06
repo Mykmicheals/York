@@ -1,15 +1,10 @@
-import { useState, ChangeEvent, useEffect, useRef } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 // import Map, { GeolocateControl, Marker } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Map, { Popup, Marker } from "react-map-gl";
-import {
-  HiLocationMarker,
-  HiOutlineArrowNarrowUp,
-  HiOutlineArrowNarrowDown,
-  HiOutlineX,
-} from "react-icons/hi";
+import { HiLocationMarker } from "react-icons/hi";
 import Rodal from "rodal";
 // include styles
 import "rodal/lib/rodal.css";
@@ -20,10 +15,7 @@ function HomeScreen() {
   const [showPopup, setShowPopup] = useState(false);
   const [filter, setFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
-  const [lng, setLng] = useState(3.3792);
-  const [lat, setLat] = useState(6.5244);
-  const [zoom, setZoom] = useState(9);
-  const [forecast, setForecast] = useState<any>();
+  const [showModal, setShowModal] = useState(false);
 
   const filteredCities = cities.filter((city) =>
     city.name.toLowerCase().includes(filter.toLowerCase())
@@ -33,6 +25,11 @@ function HomeScreen() {
     setFilter(event.target.value);
     setShowFilter(true);
   };
+
+  const [lng, setLng] = useState(3.3792);
+  const [lat, setLat] = useState(6.5244);
+  const [zoom, setZoom] = useState(9);
+  const [forecast, setForecast] = useState<any>();
 
   const handleSearch = () => {
     setLat(lat);
@@ -55,40 +52,10 @@ function HomeScreen() {
   };
 
   useEffect(() => {
-    console.log(showPopup);
+    console.log(showModal);
     handleSearch();
     fetchWeather();
-  }, [showPopup, lat, lng]);
-
-  // useEffect(() => {
-  //   const fetchCities = async () => {
-  //     const response = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=random&countrycode=&limit=20&key=${process.env.REACT_APP_OPENCAGE_API_KEY}`);
-  //     const data = await response.json();
-  //     setRegions(data.results);
-  //   }
-  //   fetchCities();
-  // }, []);
-
-  // const [city,setCity] = useState<any>()
-
-  // useEffect(() => {
-  //   const getCitiesCoordinates = async () => {
-  //     const citiesList = ['New York City', 'Los Angeles', 'Chicago', 'Houston', 'Philadelphia', 'Phoenix', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'San Francisco', 'Charlotte', 'Indianapolis', 'Seattle', 'Denver', 'Washington DC'];
-
-  //     const citiesWithCoordinates = await Promise.all(
-  //       citiesList.map(async city => {
-  //         const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(city)}.json?access_token=${process.env.REACT_APP_OPENCAGE_API_KEY}`);
-  //         const data = await response.json();
-  //         const [lng, lat] = data.features[0].center;
-  //         return { name: city, lat, lng };
-  //       })
-  //     );
-
-  //     setCity(citiesWithCoordinates);
-  //   }
-
-  //   getCitiesCoordinates();
-  // }, []);
+  }, [lat, lng]);
 
   return (
     <div>
@@ -122,7 +89,7 @@ function HomeScreen() {
             </div>
 
             {showFilter && (
-              <div className="w-full flex justify-center left-20 absolute z-50 ">
+              <div className="w-full flex justify-center">
                 <ul className="mt-2 w-1/2 rounded-md bg-white shadow-lg max-h-32 overflow-auto mx-auto">
                   {filteredCities?.map((city) => (
                     <li
@@ -142,9 +109,9 @@ function HomeScreen() {
               </div>
             )}
 
-            <div className=" md:mx-10 lg:mx-20 mt-10">
+            <div className="w-full mt-10">
               <Map
-                style={{ height: "54vh", width: "100%" }}
+                style={{ height: "75vh", width: "100%" }}
                 mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
                 longitude={lng}
                 latitude={lat}
@@ -152,22 +119,25 @@ function HomeScreen() {
                 mapStyle="mapbox://styles/mapbox/streets-v9"
               >
                 <Marker
-                  onClick={() => setShowPopup(true)}
+                  onClick={() => setShowModal(true)}
                   longitude={lng}
                   latitude={lat}
                   anchor="bottom"
                 >
-                  <HiLocationMarker size={32} color="blue" />
+                  <HiLocationMarker
+                    //onClick={togglePopup}
+                    size={32}
+                    color="blue"
+                  />
                 </Marker>
 
-                {/* {showPopup ? (
+                {/* {showModal && (
                   <Popup
                     className="z-1000 bg-red"
                     longitude={lng}
                     latitude={lat}
                     anchor="bottom"
-
-                    // onClose={() => setShowPopup(false)}
+                    onClose={() => setShowModal(false)}
                   >
                     <div className="p-6">
                       <h2 className="text-xl font-bold mb-4">
@@ -180,7 +150,7 @@ function HomeScreen() {
                           </h3>
                           <div className="flex items-center">
                             <img
-                              src={`http://openweathermap.org/img/w/${day.weather[0].icon}.png`}
+                              src={`http://openweat hermap.org/img/w/${day.weather[0].icon}.png`}
                               alt={day.weather[0].description}
                               className="w-12 h-12 mr-4"
                             />
@@ -200,18 +170,14 @@ function HomeScreen() {
                       ))}
                     </div>
                   </Popup>
-                ) : null} */}
+                )} */}
               </Map>
             </div>
           </div>
         </div>
 
-        <Rodal
-          className="h-80 py-20"
-          visible={showPopup}
-          onClose={() => setShowPopup(false)}
-        >
-          <div className="px-6">
+        {/* <Rodal visible={showModal} onClose={() => setShowModal(false)}>
+          <div className="p-6">
             <h2 className="text-xl font-bold mb-4">Weather Forecast</h2>
             {forecast?.map((day: any, index: number) => (
               <div key={index} className="mb-4">
@@ -220,7 +186,7 @@ function HomeScreen() {
                 </h3>
                 <div className="flex items-center">
                   <img
-                    src={`http://openweathermap.org/img/w/${day.weather[0].icon}.png`}
+                    src={`http://openweat hermap.org/img/w/${day.weather[0].icon}.png`}
                     alt={day.weather[0].description}
                     className="w-12 h-12 mr-4"
                   />
@@ -235,7 +201,7 @@ function HomeScreen() {
               </div>
             ))}
           </div>
-        </Rodal>
+        </Rodal> */}
       </div>
     </div>
   );
