@@ -1,11 +1,18 @@
 import { useState, ChangeEvent, useEffect, useRef } from "react";
 import { FaSearch } from "react-icons/fa";
 import "mapbox-gl/dist/mapbox-gl.css";
+
 import Map, { Popup, Marker } from "react-map-gl";
 import { MdCancel } from "react-icons/md";
 import { HiLocationMarker } from "react-icons/hi";
 import cities from "../components/cities.json";
 import SideBar from "../components/SideBar";
+import mapboxgl from "mapbox-gl";
+
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax
+mapboxgl.workerClass =
+  require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 function HomeScreen() {
   const [showPopup, setShowPopup] = useState(false);
