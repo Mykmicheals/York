@@ -4,30 +4,22 @@ import { FaSearch } from "react-icons/fa";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Map, { Popup, Marker } from "react-map-gl";
-import { HiLocationMarker } from "react-icons/hi";
+import {
+  HiLocationMarker,
+  HiOutlineArrowNarrowUp,
+  HiOutlineArrowNarrowDown,
+  HiOutlineX,
+} from "react-icons/hi";
 import Rodal from "rodal";
 // include styles
 import "rodal/lib/rodal.css";
+import cities from "../components/cities.json";
+import SideBar from "../components/SideBar";
 
 function HomeScreen() {
-  interface cities {
-    name: string;
-    lat: number;
-    lng: number;
-  }
   const [showPopup, setShowPopup] = useState(false);
   const [filter, setFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
-  const marker = useRef<mapboxgl.Marker | null>(null);
-
-  const [cities, setCities] = useState<cities[]>([
-    { name: "New York City", lat: 40.7128, lng: -74.006 },
-    { name: "Los Angeles", lat: 34.0522, lng: -118.2437 },
-    { name: "Chicago", lat: 41.8781, lng: -87.6298 },
-    { name: "Houston", lat: 29.7604, lng: -95.3698 },
-    { name: "Philadelphia", lat: 39.9526, lng: -75.1652 },
-    // ...add more cities here
-  ]);
 
   const filteredCities = cities.filter((city) =>
     city.name.toLowerCase().includes(filter.toLowerCase())
@@ -41,19 +33,32 @@ function HomeScreen() {
   const [lng, setLng] = useState(3.3792);
   const [lat, setLat] = useState(6.5244);
   const [zoom, setZoom] = useState(9);
-
-  const map = useRef<mapboxgl.Map | null>(null);
+  const [forecast, setForecast] = useState<any>();
 
   const handleSearch = () => {
-    if (!map.current) return; // wait for map to initialize
-    map.current.setCenter([lng, lat]);
     setLat(lat);
     setLng(lng);
   };
 
+  const weatherApiKey = process.env.REACT_APP_WEATHER_API_KEY;
+
+  const fetchWeather = async () => {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/onecall?lat=51.5074&lon=0.1278&exclude=minutely,hourly&units=metric&appid=${weatherApiKey}`
+    );
+    const data = await response.json();
+    setForecast(data?.daily.slice(0, 2));
+    // console.log(data?.daily.slice(0, 2));
+  };
+
+  const togglePopup = () => {
+    setShowPopup(true);
+  };
+
   useEffect(() => {
-    console.log(lat);
+    console.log(showPopup);
     handleSearch();
+    // fetchWeather();
   }, [showPopup, lat, lng]);
 
   // useEffect(() => {
@@ -89,21 +94,11 @@ function HomeScreen() {
   return (
     <div>
       <div className="flex w-full gap-20">
-        <div className="w-1/4 h-screen bg-teal-700">
-          Cities
-          <h3 className="text-white text-center text-3xl font-mono mt-8"></h3>
-          <div className="mt-12 mx-10">
-            {cities.map((each: any) => {
-              return (
-                <p className="text-gray-300 text-xl pointer mb-8 hover:border hover:px-4 hover:py-1 hover:bg-teal-900">
-                  {each.name}
-                </p>
-              );
-            })}
-          </div>
+        <div className="hidden md:block md:w-1/3 lg:w-1/4 h-screen overflow-scroll bg-teal-700">
+          <SideBar />
         </div>
 
-        <div className="mt-10 flex-grow w-3/4  text-center">
+        <div className="w-full mt-10 flex-grow md:w-2/3  lg:w-3/4  text-center">
           <div>
             <div className="relative w-full max-w-md mx-auto">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -148,43 +143,66 @@ function HomeScreen() {
               </div>
             )}
 
-            <Map
-              style={{ height: "500px", width: "90%" }}
-              mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-              longitude={lng}
-              latitude={lat}
-              zoom={zoom}
-              mapStyle="mapbox://styles/mapbox/streets-v9"
-            >
-              <Marker
-                onClick={() => setShowPopup(true)}
+            <div className="w-full mt-10">
+              {/* <Map
+                style={{ height: "80vh", width: "100%" }}
+                mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
                 longitude={lng}
                 latitude={lat}
-                anchor="bottom"
+                zoom={zoom}
+                mapStyle="mapbox://styles/mapbox/streets-v9"
               >
-                <HiLocationMarker
-                  onClick={() => setShowPopup(true)}
-                  size={32}
-                  color="blue"
-                />
-              </Marker>
-
-              {showPopup ? (
-                <Popup
-                  className="z-1000 bg-red"
+                <Marker
+                  // onClick={togglePopup}
                   longitude={lng}
                   latitude={lat}
                   anchor="bottom"
-                  onClose={() => setShowPopup(false)}
                 >
-                  <p>this is a good popup</p>
-                </Popup>
-              ) : null}
-            </Map>
+                  <HiLocationMarker size={32} color="blue" />
+                </Marker>
+
+                {showPopup ? (
+                  <Popup
+                    className="z-1000 bg-red"
+                    longitude={lng}
+                    latitude={lat}
+                    anchor="bottom"
+                    onClose={() => setShowPopup(false)}
+                  >
+                    <p>this is a good popup</p>
+                  </Popup>
+                ) : null}
+              </Map> */}
+            </div>
           </div>
         </div>
 
-        {/* <Rodal visible={showPopup} onClose={() => setShowPopup(false)}></Rodal> */}
+        {/* <Rodal visible={showPopup} onClose={() => setShowPopup(false)}>
+          <div className="p-6">
+            <h2 className="text-xl font-bold mb-4">Weather Forecast</h2>
+            {forecast?.map((day: any, index: number) => (
+              <div key={index} className="mb-4">
+                <h3 className="text-lg font-semibold">
+                  {index === 0 ? "Today" : "Tomorrow"}
+                </h3>
+                <div className="flex items-center">
+                  <img
+                    src={`http://openweathermap.org/img/w/${day.weather[0].icon}.png`}
+                    alt={day.weather[0].description}
+                    className="w-12 h-12 mr-4"
+                  />
+                  <div>
+                    <p className="text-gray-600">
+                      {day.weather[0].description}
+                    </p>
+                    <p className="text-gray-600">High: {day.temp.max}°C</p>
+                    <p className="text-gray-600">Low: {day.temp.min}°C</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Rodal> */}
       </div>
     </div>
   );
