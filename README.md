@@ -1,46 +1,115 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Demo for the project [York app](https://york.vercel.app/)
 
-## Available Scripts
+### To run the project
 
-In the project directory, you can run:
+- clone from the repo using the command
 
-### `npm start`
+` git clone https://github.com/Mykmicheals/York.git `
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Change directory using 
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+` cd york `
 
-### `npm test`
+- install all necessary dependecies using the command
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+ ` npm install `
+ 
+ ### Environment Variables
+ 
+ - Signup with mapbox to get your api key [mapbox](https://account.mapbox.com/auth/signup/)
 
-### `npm run build`
+ - Signup with open weather api to get your api key [mapbox](https://openweathermap.org/api)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+ - Create a .env file in the root of your project and add your api keys
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+REACT_APP_WEATHER_API_KEY = xxxxxxxxxxxxxxxxxxxx
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+REACT_APP_MAPBOX_ACCESS_TOKEN = xxxxxxxxxxxxxxxxx
 
-### `npm run eject`
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Then run the app using the command
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+` npm install `
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### The HomePage
 
-## Learn More
+![Screenshot from 2023-03-06 21-58-18](https://user-images.githubusercontent.com/88559940/223353943-9a140020-6648-457a-aa4d-24797f2405a4.png)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### The Weather Modal
+
+![Screenshot from 2023-03-06 22-07-52](https://user-images.githubusercontent.com/88559940/223354027-83d3bb73-d3da-4652-b4a1-2c818830a6f4.png)
+
+
+### The Mobile View
+
+
+![Screenshot from 2023-03-06 22-14-02](https://user-images.githubusercontent.com/88559940/223354120-89c0cc60-c4b5-4669-9b79-01eca7fed120.png)
+
+
+
+### The Entry code
+
+
+
+![Screenshot from 2023-03-06 22-35-42](https://user-images.githubusercontent.com/88559940/223354197-62e573f5-2f6e-43d4-9f3a-fabc1e5c8a1a.png)
+
+
+The entry code contains two components, the Header and the HomeScreen. The homeScreen contains the map and the modal
+
+
+
+```
+
+### The map components
+
+import Map, { Popup, Marker } from "react-map-gl";
+
+         <div className="mx-20 lg:mx-20 mt-10">
+              <Map
+                style={{ height: "54vh", width: "100%" }}
+                mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+                longitude={lng}
+                latitude={lat}
+                zoom={zoom}
+                mapStyle="mapbox://styles/mapbox/streets-v9"
+              >
+                <Marker
+                  onClick={() => setShowPopup(true)}
+                  longitude={lng}
+                  latitude={lat}
+                  anchor="bottom"
+                >
+                  <HiLocationMarker size={32} color="blue" />
+                </Marker>
+         
+              </Map>
+            </div>
+
+
+````
+
+The map component shows the map container, the Marker component shows the icon, the popup component shows the modal
+
+
+### Fetch Weather Logic
+
+
+```
+  const weatherApiKey = process.env.REACT_APP_WEATHER_API_KEY;
+
+  const fetchWeather = async () => {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/onecall?lat=51.5074&lon=0.1278&exclude=minutely,hourly&units=metric&appid=${weatherApiKey}`
+    );
+    const data = await response.json();
+    setForecast(data?.daily.slice(0, 2));
+  };
+
+
+```
